@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Blog - LIS Liderazgo Integral en Sistemas</title>
+  <meta name="description" content="Artículos sobre ISO, cumplimiento normativo, gestión de calidad y más." />
+  <meta property="og:title" content="Blog - LIS Liderazgo Integral en Sistemas" />
+  <meta property="og:description" content="Artículos sobre ISO, cumplimiento normativo y gestión empresarial." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .blog-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(300px,1fr)); gap: 2rem; margin-top: 2rem; }
+    .blog-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.3s; }
+    .blog-card:hover { transform: translateY(-4px); }
+    .blog-card img { width: 100%; height: 200px; object-fit: cover; }
+    .blog-card-content { padding: 1.5rem; }
+    .blog-card h3 { margin: 0 0 0.5rem; font-size: 1.25rem; }
+    .blog-card .meta { font-size: 0.85rem; color: var(--color-gray); margin-bottom: 0.75rem; }
+    .blog-card p { margin: 0 0 1rem; }
+    .blog-card .btn { display: inline-block; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <picture>
+          <source type="image/avif" srcset="assets/lis-logo.avif">
+          <source type="image/webp" srcset="assets/lis-logo.webp">
+          <img src="assets/lis-logo.png" alt="LIS" width="140" height="44">
+        </picture>
+      </a>
+      <button class="nav-toggle" aria-label="Abrir menú">☰</button>
+      <nav class="main-nav" id="main-nav">
+        <a href="index.html">Inicio</a>
+        <a href="quienes-somos.html">Quiénes Somos</a>
+        <a href="servicios.html">Servicios</a>
+        <a href="blog.html">Blog</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section bg-light">
+      <div class="container">
+        <h1>Blog</h1>
+        <p>Artículos sobre gestión ISO, cumplimiento normativo, seguridad industrial y mejores prácticas empresariales.</p>
+        
+        <div class="blog-grid" id="blog-grid">
+          <!-- Blog posts will be loaded dynamically -->
+          <div class="blog-card">
+            <img src="assets/hero-gif.gif" alt="Artículo" />
+            <div class="blog-card-content">
+              <h3>Próximamente</h3>
+              <p class="meta">Categoría: Noticias</p>
+              <p>Estamos preparando contenido exclusivo para ti. ¡Mantente atento!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="section">
+      <div class="container" style="max-width: 600px; text-align: center;">
+        <h2>Suscríbete a nuestro newsletter</h2>
+        <p>Recibe artículos, noticias y consejos sobre gestión empresarial directamente en tu correo.</p>
+        <form id="newsletter-form" style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+          <input type="email" id="newsletter-email" placeholder="Tu correo electrónico" required style="flex: 1; min-width: 200px; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;" />
+          <button type="submit" class="btn primary">Suscribirse</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-col">
+        <img src="assets/lis-logo-small.png" alt="LIS" />
+        <p>© 2026 LIS - Liderazgo Integral en Sistemas. Todos los derechos reservados.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Enlaces rápidos</h4>
+        <nav><a href="index.html">Inicio</a> · <a href="servicios.html">Servicios</a> · <a href="blog.html">Blog</a> · <a href="contacto.html">Contacto</a></nav>
+      </div>
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <p><a href="mailto:info-consultoria@lis-consultoria.com">info-consultoria@lis-consultoria.com</a><br/>
+        <a href="tel:+529211193929">+52 921 119 3929</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <a class="whatsapp-btn" href="https://wa.me/529211193929?text=Hola%2C%20me%20interesa%20su%20servicio" aria-label="WhatsApp">
+    <img src="assets/fleur.png" alt="WhatsApp" />
+  </a>
+
+  <script src="script.js"></script>
+  <script>
+    // Load blog posts from API
+    async function loadBlogPosts() {
+      try {
+        const res = await fetch('http://localhost:3001/api/blog');
+        const posts = await res.json();
+        
+        const grid = document.getElementById('blog-grid');
+        
+        if (posts.length === 0) {
+          return; // Keep the placeholder
+        }
+        
+        grid.innerHTML = posts.map(post => `
+          <article class="blog-card">
+            <img src="${post.imagen_url || 'assets/hero-gif.gif'}" alt="${post.titulo}" />
+            <div class="blog-card-content">
+              <h3>${post.titulo}</h3>
+              <p class="meta">${post.categoria || 'Artículo'} · ${new Date(post.fecha_publicacion).toLocaleDateString('es-MX')}</p>
+              <p>${post.resumen}</p>
+              <a href="blog-detalle.html?slug=${post.slug}" class="btn">Leer más</a>
+            </div>
+          </article>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading blog posts:', error);
+      }
+    }
+    
+    // Newsletter subscription
+    document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('newsletter-email').value;
+      
+      try {
+        const res = await fetch('http://localhost:3001/api/newsletter/suscribir', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          showToast(data.message, 'success');
+          document.getElementById('newsletter-email').value = '';
+        } else {
+          showToast(data.error || 'Error al suscribirse', 'error');
+        }
+      } catch (error) {
+        showToast('Error de conexión', 'error');
+      }
+    });
+    
+    // Load posts on page load
+    loadBlogPosts();
+  </script>
+</body>
+</html>

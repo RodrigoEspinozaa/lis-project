@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Planes y Precios - LIS</title>
+  <meta name="description" content="Elige el plan perfecto para tu consultoria. Planes básico, profesional y empresarial." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .precios-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .precios-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 3rem 0; }
+    .plan-card { 
+      background: white; 
+      border: 2px solid #ddd; 
+      padding: 2rem; 
+      border-radius: 8px;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .plan-card:hover { border-color: #0B2E5F; box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+    .plan-card.popular { border-color: #0B2E5F; background: #f9f9f9; }
+    .plan-card.popular::before { 
+      content: "POPULAR"; 
+      position: absolute; 
+      top: -12px; 
+      left: 20px; 
+      background: #0B2E5F; 
+      color: white; 
+      padding: 6px 12px; 
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .plan-nombre { font-family: 'Playfair Display'; font-size: 1.8rem; margin: 1rem 0; color: #0B2E5F; }
+    .plan-precio { font-size: 2.5rem; font-weight: 700; color: #0B2E5F; margin: 1rem 0; }
+    .plan-precio span { font-size: 0.8rem; color: #6D737A; }
+    .plan-features { list-style: none; padding: 1.5rem 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+    .plan-features li { padding: 0.8rem 0; color: #333; }
+    .plan-features li::before { content: "✓ "; color: #10b981; font-weight: 700; margin-right: 0.5rem; }
+    .plan-btn { width: 100%; padding: 0.8rem; margin-top: 1.5rem; background: #0B2E5F; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .plan-btn:hover { background: #1F4E79; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <picture>
+          <source type="image/avif" srcset="assets/lis-logo.avif">
+          <source type="image/webp" srcset="assets/lis-logo.webp">
+          <img src="assets/lis-logo.png" alt="LIS" width="180" height="56">
+        </picture>
+      </a>
+      <button class="nav-toggle" aria-label="Menú">☰</button>
+      <nav id="main-nav" class="main-nav">
+        <a href="index.html">Inicio</a>
+        <a href="servicios.html">Servicios</a>
+        <a href="precios.html" class="active">Precios</a>
+        <a href="quienes-somos.html">Quiénes Somos</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-section" style="text-align:center; padding: 3rem 1rem;">
+      <h1 style="font-family:'Playfair Display'; font-size:2.5rem; color:#0B2E5F;">Planes y Precios</h1>
+      <p style="color:#6D737A; max-width:600px; margin:1rem auto;">Elige el plan perfecto para las necesidades de tu organización</p>
+    </section>
+
+    <div class="precios-container">
+      <div id="planes-grid" class="precios-grid"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <h3>LIS Consultoria</h3>
+        <p>Liderazgo Integral en Sistemas</p>
+      </div>
+      <div>
+        <h4>Enlaces</h4>
+        <a href="index.html">Inicio</a>
+        <a href="servicios.html">Servicios</a>
+        <a href="contacto.html">Contacto</a>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <a href="tel:+5292111939">+52 921 119 3929</a>
+        <a href="mailto:info-consultoria@lis-consultoria.com">info-consultoria@lis-consultoria.com</a>
+      </div>
+    </div>
+    <p style="text-align:center; padding-top:2rem; border-top:1px solid #eee;">© 2026 LIS. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+    const API_URL = 'http://localhost:3001/api';
+
+    async function loadPlanes() {
+      try {
+        const res = await fetch(`${API_URL}/planes`);
+        const planes = await res.json();
+        const grid = document.getElementById('planes-grid');
+        
+        grid.innerHTML = planes.map(p => `
+          <div class="plan-card ${p.es_popular ? 'popular' : ''}">
+            <h3 class="plan-nombre">${p.nombre}</h3>
+            <div class="plan-precio">${p.precio} <span>/${p.moneda}</span></div>
+            <p style="color:#666;">${p.descripcion || ''}</p>
+            <ul class="plan-features">
+              ${(Array.isArray(p.features) ? p.features : JSON.parse(p.features || '[]'))
+                .map(f => `<li>${f}</li>`).join('')}
+            </ul>
+            <button class="plan-btn" onclick="window.location.href='contacto.html?plan=${p.id}'">Seleccionar Plan</button>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error(error);
+        document.getElementById('planes-grid').innerHTML = '<p>Error al cargar planes</p>';
+      }
+    }
+
+    // Mobile nav toggle
+    document.querySelector('.nav-toggle').addEventListener('click', () => {
+      const nav = document.getElementById('main-nav');
+      nav.style.display = nav.style.display === 'block' ? '' : 'block';
+    });
+
+    loadPlanes();
+  </script>
+</body>
+</html>

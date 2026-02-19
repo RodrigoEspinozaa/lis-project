@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin - LIS</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { font-family: Inter, system-ui, sans-serif; background: #f5f5f5; }
+    .admin-container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+    .login-box { background: white; padding: 2rem; border-radius: 8px; max-width: 400px; margin: 2rem auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .login-box h1 { margin-bottom: 1rem; color: #0B2E5F; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+    .form-group input { width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px; }
+    button { background: #0B2E5F; color: white; padding: 0.6rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    button:hover { background: #1F4E79; }
+    .hidden { display: none; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; background: white; padding: 1rem; border-radius: 8px; }
+    .tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .tab-btn { background: white; border: 1px solid #ddd; padding: 0.6rem 1rem; cursor: pointer; border-radius: 6px; }
+    .tab-btn.active { background: #0B2E5F; color: white; }
+    .tab-content { background: white; padding: 1rem; border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.8rem; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #f9f9f9; font-weight: 600; }
+    .btn-small { background: #0B2E5F; color: white; padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
+    .btn-danger { background: #dc3545; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+    .modal.active { display: flex; }
+    .modal-content { background: white; padding: 2rem; border-radius: 8px; max-width: 500px; width: 90%; }
+    .modal-content h2 { margin-bottom: 1rem; }
+    .alert { padding: 1rem; margin-bottom: 1rem; border-radius: 6px; }
+    .alert.success { background: #d4edda; color: #155724; }
+    .alert.error { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-box">
+      <h1>Admin LIS</h1>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Usuario</label>
+          <input type="text" id="loginUser" required>
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" id="loginPass" required>
+        </div>
+        <button type="submit">Ingresar</button>
+      </form>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+      <div class="header">
+        <h1>Panel Administrativo LIS</h1>
+        <button onclick="logout()">Cerrar sesión</button>
+      </div>
+
+      <div id="alert"></div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('contactos')">Contactos</button>
+        <button class="tab-btn" onclick="switchTab('servicios')">Servicios</button>
+        <button class="tab-btn" onclick="switchTab('testimonios')">Testimonios</button>
+      </div>
+
+      <!-- Contactos -->
+      <div id="contactos" class="tab-content">
+        <h2>Contactos</h2>
+        <input type="text" id="searchContactos" placeholder="Buscar por nombre o email..." oninput="searchContactos()" style="padding:0.6rem; border:1px solid #ddd; border-radius:6px; width:100%; max-width:400px; margin-bottom:1rem;">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Mensaje</th>
+              <th>Fecha</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="contactosTable"></tbody>
+        </table>
+      </div>
+
+      <!-- Servicios -->
+      <div id="servicios" class="tab-content hidden">
+        <h2>Servicios</h2>
+        <div style="display:flex; gap:1rem; margin-bottom:1rem;">
+          <input type="text" id="searchServicios" placeholder="Buscar servicio..." oninput="searchServicios()" style="padding:0.6rem; border:1px solid #ddd; border-radius:6px; flex:1;">
+          <button onclick="openModalServicio()">+ Nuevo Servicio</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="serviciosTable"></tbody>
+        </table>
+      </div>
+
+      <!-- Testimonios -->
+      <div id="testimonios" class="tab-content hidden">
+        <h2>Testimonios</h2>
+        <div style="display:flex; gap:1rem; margin-bottom:1rem;">
+          <input type="text" id="searchTestimonios" placeholder="Buscar testimonio..." oninput="searchTestimonios()" style="padding:0.6rem; border:1px solid #ddd; border-radius:6px; flex:1;">
+          <button onclick="openModalTestimonio()">+ Nuevo Testimonio</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Cargo</th>
+              <th>Empresa</th>
+              <th>Testimonio</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="testimoniosTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Servicio -->
+  <div id="modalServicio" class="modal">
+    <div class="modal-content">
+      <h2>Servicio</h2>
+      <form id="formServicio">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" id="servicioNombre" required>
+        </div>
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea id="servicioDesc" rows="4" required></textarea>
+        </div>
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="closeModal('modalServicio')">Cancelar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Testimonio -->
+  <div id="modalTestimonio" class="modal">
+    <div class="modal-content">
+      <h2>Testimonio</h2>
+      <form id="formTestimonio">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" id="testimonioNombre" required>
+        </div>
+        <div class="form-group">
+          <label>Cargo</label>
+          <input type="text" id="testimonioCargo">
+        </div>
+        <div class="form-group">
+          <label>Empresa</label>
+          <input type="text" id="testimonioEmpresa">
+        </div>
+        <div class="form-group">
+          <label>Testimonio</label>
+          <textarea id="testimonioTexto" rows="4" required></textarea>
+        </div>
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="closeModal('modalTestimonio')">Cancelar</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // DESARROLLO: Cambiar a 'http://localhost:3001/api' para desarrollo local
+    // PRODUCCIÓN: Cambiar a la URL del servidor en producción (ej: https://tu-servidor.com/api)
+    const API_URL = 'http://localhost:3001/api';
+    let token = localStorage.getItem('token');
+    let logoutTimer = null;
+    let editingId = null;
+    let editingType = null;
+
+    // Auto-logout después de 30 minutos de inactividad
+    const resetLogoutTimer = () => {
+      clearTimeout(logoutTimer);
+      logoutTimer = setTimeout(() => {
+        showAlert('Sesión expirada por inactividad', 'warning');
+        logout();
+      }, 30 * 60 * 1000);
+    };
+
+    document.addEventListener('mousedown', resetLogoutTimer);
+    document.addEventListener('keydown', resetLogoutTimer);
+
+    if (token) {
+      showDashboard();
+      loadData();
+      resetLogoutTimer();
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('loginUser').value;
+      const password = document.getElementById('loginPass').value;
+
+      if (!username || !password) {
+        showAlert('Usuario y contraseña requeridos', 'warning');
+        return;
+      }
+
+      if (password.length < 5) {
+        showAlert('Contraseña muy corta', 'warning');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          token = data.token;
+          localStorage.setItem('token', token);
+          document.getElementById('loginUser').value = '';
+          document.getElementById('loginPass').value = '';
+          showDashboard();
+          loadData();
+          resetLogoutTimer();
+          showAlert('Login exitoso', 'success');
+        } else {
+          showAlert(data.error || 'Credenciales inválidas', 'error');
+        }
+      } catch (error) {
+        showAlert('Error de conexión', 'error');
+      }
+    });
+
+    function showDashboard() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+    }
+
+    function logout() {
+      token = null;
+      localStorage.removeItem('token');
+      clearTimeout(logoutTimer);
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('dashboard').classList.add('hidden');
+      document.getElementById('loginUser').value = '';
+      document.getElementById('loginPass').value = '';
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tab).classList.remove('hidden');
+      event.target.classList.add('active');
+    }
+
+    // Búsqueda de contactos
+    const searchContactos = () => {
+      const query = document.getElementById('searchContactos').value.toLowerCase();
+      document.querySelectorAll('#contactosTable tr').forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    };
+
+    // Búsqueda de servicios
+    const searchServicios = () => {
+      const query = document.getElementById('searchServicios').value.toLowerCase();
+      document.querySelectorAll('#serviciosTable tr').forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    };
+
+    // Búsqueda de testimonios
+    const searchTestimonios = () => {
+      const query = document.getElementById('searchTestimonios').value.toLowerCase();
+      document.querySelectorAll('#testimoniosTable tr').forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    };
+
+    async function loadData() {
+      loadContactos();
+      loadServicios();
+      loadTestimonios();
+    }
+
+    async function loadContactos() {
+      try {
+        const res = await fetch(`${API_URL}/contactos`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        const tbody = document.getElementById('contactosTable');
+        tbody.innerHTML = data.map(c => `
+          <tr>
+            <td>${c.nombre}</td>
+            <td>${c.email}</td>
+            <td>${c.mensaje.substring(0, 50)}...</td>
+            <td>${new Date(c.fecha_creacion).toLocaleDateString()}</td>
+            <td><button class="btn-small btn-danger" onclick="deleteContactoConfirm(${c.id})">Eliminar</button></td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function loadServicios() {
+      try {
+        const res = await fetch(`${API_URL}/servicios`);
+        const data = await res.json();
+        const tbody = document.getElementById('serviciosTable');
+        tbody.innerHTML = data.map(s => `
+          <tr>
+            <td>${s.nombre}</td>
+            <td>${s.descripcion.substring(0, 50)}...</td>
+            <td>${s.estado ? 'Activo' : 'Inactivo'}</td>
+            <td>
+              <button class="btn-small" onclick="editServicio(${s.id}, '${s.nombre}', '${s.descripcion.replace(/"/g, '&quot;')}')">Editar</button>
+              <button class="btn-small btn-danger" onclick="deleteServicioConfirm(${s.id})">Eliminar</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function loadTestimonios() {
+      try {
+        const res = await fetch(`${API_URL}/testimonios`);
+        const data = await res.json();
+        const tbody = document.getElementById('testimoniosTable');
+        tbody.innerHTML = data.map(t => `
+          <tr>
+            <td>${t.nombre}</td>
+            <td>${t.cargo || '-'}</td>
+            <td>${t.empresa || '-'}</td>
+            <td>${t.testimonio.substring(0, 50)}...</td>
+            <td>
+              <button class="btn-small" onclick="editTestimonio(${t.id}, '${t.nombre}', '${t.cargo || ''}', '${t.empresa || ''}', '${t.testimonio.replace(/"/g, '&quot;')}')">Editar</button>
+              <button class="btn-small btn-danger" onclick="deleteTestimonioConfirm(${t.id})">Eliminar</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    // Confirmaciones mejoradas con modal
+    function showConfirmModal(message, onConfirm) {
+      if (confirm(message)) onConfirm();
+    }
+
+    async function deleteContactoConfirm(id) {
+      showConfirmModal('¿Estás seguro que deseas eliminar este contacto?', async () => {
+        try {
+          const res = await fetch(`${API_URL}/contactos/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            loadContactos();
+            showAlert('Contacto eliminado', 'success');
+          } else {
+            showAlert('Error al eliminar', 'error');
+          }
+        } catch (error) {
+          showAlert('Error de conexión', 'error');
+        }
+      });
+    }
+
+    // Editar Servicio
+    function editServicio(id, nombre, descripcion) {
+      editingId = id;
+      editingType = 'servicio';
+      document.getElementById('servicioNombre').value = nombre;
+      document.getElementById('servicioDesc').value = descripcion;
+      document.getElementById('modalServicios Title').textContent = 'Editar Servicio';
+      document.getElementById('modalServicio').classList.add('active');
+    }
+
+    // Editar Testimonio
+    function editTestimonio(id, nombre, cargo, empresa, testimonio) {
+      editingId = id;
+      editingType = 'testimonio';
+      document.getElementById('testimonioNombre').value = nombre;
+      document.getElementById('testimonioCargo').value = cargo;
+      document.getElementById('testimonioEmpresa').value = empresa;
+      document.getElementById('testimonioTexto').value = testimonio;
+      document.getElementById('modalTestimonio').classList.add('active');
+    }
+
+    async function deleteServicioConfirm(id) {
+      showConfirmModal('¿Estás seguro que deseas eliminar este servicio?', async () => {
+        try {
+          const res = await fetch(`${API_URL}/servicios/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            loadServicios();
+            showAlert('Servicio eliminado', 'success');
+          }
+        } catch (error) {
+          showAlert('Error al eliminar', 'error');
+        }
+      });
+    }
+
+    async function deleteTestimonioConfirm(id) {
+      showConfirmModal('¿Estás seguro que deseas eliminar este testimonio?', async () => {
+        try {
+          const res = await fetch(`${API_URL}/testimonios/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            loadTestimonios();
+            showAlert('Testimonio eliminado', 'success');
+          }
+        } catch (error) {
+          showAlert('Error al eliminar', 'error');
+        }
+      });
+    }
+
+    function openModalServicio() {
+      editingId = null;
+      editingType = null;
+      document.getElementById('formServicio').reset();
+      document.getElementById('modalServicio').classList.add('active');
+    }
+
+    function openModalTestimonio() {
+      editingId = null;
+      editingType = null;
+      document.getElementById('formTestimonio').reset();
+      document.getElementById('modalTestimonio').classList.add('active');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+      editingId = null;
+      editingType = null;
+    }
+
+    document.getElementById('formServicio').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('servicioNombre').value.trim();
+      const descripcion = document.getElementById('servicioDesc').value.trim();
+      
+      if (!nombre || !descripcion) {
+        showAlert('Completa todos los campos', 'warning');
+        return;
+      }
+
+      if (descripcion.length < 10) {
+        showAlert('La descripción debe tener al menos 10 caracteres', 'warning');
+        return;
+      }
+      
+      try {
+        const url = editingId ? `${API_URL}/servicios/${editingId}` : `${API_URL}/servicios`;
+        const method = editingId ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ nombre, descripcion })
+        });
+
+        if (res.ok) {
+          loadServicios();
+          closeModal('modalServicio');
+          showAlert(editingId ? 'Servicio actualizado' : 'Servicio guardado', 'success');
+        } else {
+          showAlert('Error al guardar', 'error');
+        }
+      } catch (error) {
+        showAlert('Error de conexión', 'error');
+      }
+    });
+
+    document.getElementById('formTestimonio').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('testimonioNombre').value.trim();
+      const cargo = document.getElementById('testimonioCargo').value.trim();
+      const empresa = document.getElementById('testimonioEmpresa').value.trim();
+      const testimonio = document.getElementById('testimonioTexto').value.trim();
+      
+      if (!nombre || !testimonio) {
+        showAlert('Nombre y testimonio son requeridos', 'warning');
+        return;
+      }
+
+      if (testimonio.length < 20) {
+        showAlert('El testimonio debe tener al menos 20 caracteres', 'warning');
+        return;
+      }
+      
+      try {
+        const url = editingId ? `${API_URL}/testimonios/${editingId}` : `${API_URL}/testimonios`;
+        const method = editingId ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ nombre, cargo, empresa, testimonio })
+        });
+
+        if (res.ok) {
+          loadTestimonios();
+          closeModal('modalTestimonio');
+          showAlert(editingId ? 'Testimonio actualizado' : 'Testimonio guardado', 'success');
+        } else {
+          showAlert('Error al guardar', 'error');
+        }
+      } catch (error) {
+        showAlert('Error de conexión', 'error');
+      }
+    });
+
+    function showAlert(message, type = 'info') {
+      const alert = document.getElementById('alert');
+      const colors = { success: '#10b981', error: '#ef4444', warning: '#f59e0b', info: '#3b82f6' };
+      alert.innerHTML = `<div style="background:${colors[type]||'#3b82f6'};color:white;padding:1rem;border-radius:6px;margin-bottom:1rem;">${message}</div>`;
+      setTimeout(() => alert.innerHTML = '', 4000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Preguntas Frecuentes - LIS Liderazgo Integral en Sistemas</title>
+  <meta name="description" content="Preguntas frecuentes sobre nuestros servicios de consultoría ISO y cumplimiento normativo." />
+  <meta property="og:title" content="Preguntas Frecuentes - LIS" />
+  <meta property="og:description" content="Respuestas a las preguntas más comunes sobre nuestros servicios." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .faq-item { background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .faq-question { font-weight: 600; color: var(--color-primary); margin-bottom: 0.5rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .faq-question::after { content: '+'; font-size: 1.5rem; }
+    .faq-item.active .faq-question::after { content: '-'; }
+    .faq-answer { color: var(--color-gray); line-height: 1.7; display: none; }
+    .faq-item.active .faq-answer { display: block; }
+    .faq-category { margin: 2rem 0 1rem; color: var(--color-secondary); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <picture>
+          <source type="image/avif" srcset="assets/lis-logo.avif">
+          <source type="image/webp" srcset="assets/lis-logo.webp">
+          <img src="assets/lis-logo.png" alt="LIS" width="140" height="44">
+        </picture>
+      </a>
+      <button class="nav-toggle" aria-label="Abrir menú">☰</button>
+      <nav class="main-nav" id="main-nav">
+        <a href="index.html">Inicio</a>
+        <a href="quienes-somos.html">Quiénes Somos</a>
+        <a href="servicios.html">Servicios</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <h1>Preguntas Frecuentes</h1>
+        <p>Encuentra respuestas a las preguntas más comunes sobre nuestros servicios de consultoría.</p>
+        
+        <div id="faq-list">
+          <!-- FAQs will be loaded dynamically -->
+          <div class="faq-item">
+            <div class="faq-question">¿Qué es una certificación ISO?</div>
+            <div class="faq-answer">La certificación ISO es una verificación independiente que confirma que una organización cumple con los estándares internacionales de la Organización Internacional de Normalización (ISO). Esto demuestra el compromiso de la empresa con la calidad, seguridad y eficiencia.</div>
+          </div>
+          
+          <div class="faq-item">
+            <div class="faq-question">¿Cuánto tiempo toma obtener una certificación ISO?</div>
+            <div class="faq-answer">El tiempo varía según el tamaño de la organización y el sistema de gestión a implementar. Generalmente, el proceso toma entre 3 a 12 meses. Nosotros te acompañamos durante todo el proceso para hacerlo lo más eficiente posible.</div>
+          </div>
+          
+          <div class="faq-item">
+            <div class="faq-question">¿Necesito tener un sistema de gestión existente?</div>
+            <div class="faq-answer">No es necesario. Nosotros te ayudamos a diseñar e implementar el sistema de gestión desde cero, adaptándolo a las necesidades específicas de tu organización.</div>
+          </div>
+          
+          <div class="faq-item">
+            <div class="faq-question">¿Ofrecen capacitación para mi equipo?</div>
+            <div class="faq-answer">Sí, contamos con programas de capacitación personalizados para tu equipo, incluyendo formación de auditores internos, sensibilización en ISO y entrenamiento específico según el estándar que necesites implementar.</div>
+          </div>
+          
+          <div class="faq-item">
+            <div class="faq-question">¿Qué industrias atienden?</div>
+            <div class="faq-answer">Tenemos experiencia en múltiples sectores: manufactura, construcción, servicios, salud, educación, alimentos, automotriz, entre otros. Adaptamos我们的解决方案a las necesidades específicas de cada industria.</div>
+          </div>
+          
+          <div class="faq-item">
+            <div class="faq-question">¿Cómo solicito una cotización?</div>
+            <div class="faq-answer">Puedes contactarnos directamente a través de nuestro formulario de contacto, llamarnos o escribirnos por WhatsApp. Te enviaremos una propuesta personalizada sin compromiso.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section class="section bg-light">
+      <div class="container" style="text-align: center;">
+        <h2>¿No encontraste lo que buscabas?</h2>
+        <p>Contáctanos y con gusto resolveremos tus dudas.</p>
+        <a href="contacto.html" class="btn primary">Contáctanos</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-col">
+        <img src="assets/lis-logo-small.png" alt="LIS" />
+        <p>© 2026 LIS - Liderazgo Integral en Sistemas. Todos los derechos reservados.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Enlaces rápidos</h4>
+        <nav><a href="index.html">Inicio</a> · <a href="servicios.html">Servicios</a> · <a href="faq.html">FAQ</a> · <a href="contacto.html">Contacto</a></nav>
+      </div>
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <p><a href="mailto:info-consultoria@lis-consultoria.com">info-consultoria@lis-consultoria.com</a><br/>
+        <a href="tel:+529211193929">+52 921 119 3929</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <a class="whatsapp-btn" href="https://wa.me/529211193929?text=Hola%2C%20me%20interesa%20su%20servicio" aria-label="WhatsApp">
+    <img src="assets/fleur.png" alt="WhatsApp" />
+  </a>
+
+  <script src="script.js"></script>
+  <script>
+    // FAQ accordion functionality
+    document.querySelectorAll('.faq-question').forEach(q => {
+      q.addEventListener('click', () => {
+        q.parentElement.classList.toggle('active');
+      });
+    });
+    
+    // Load FAQs from API
+    async function loadFAQs() {
+      try {
+        const res = await fetch('http://localhost:3001/api/faq');
+        const faqs = await res.json();
+        
+        if (faqs.length === 0) return;
+        
+        const list = document.getElementById('faq-list');
+        list.innerHTML = faqs.map(faq => `
+          <div class="faq-item">
+            <div class="faq-question">${faq.pregunta}</div>
+            <div class="faq-answer">${faq.respuesta}</div>
+          </div>
+        `).join('');
+        
+        // Re-attach click handlers
+        document.querySelectorAll('.faq-question').forEach(q => {
+          q.addEventListener('click', () => {
+            q.parentElement.classList.toggle('active');
+          });
+        });
+      } catch (error) {
+        console.error('Error loading FAQs:', error);
+      }
+    }
+    
+    loadFAQs();
+  </script>
+</body>
+</html>
