@@ -65,24 +65,26 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'Backend funcionando correctamente' });
 });
 
-// Rutas - una por una para identificar problema
-console.log('Cargando rutas...');
+// Routes - Load safely
+console.log('🚀 Cargando rutas...');
 
-try {
-  const authRouter = require('./routes/auth')(pool);
-  app.use('/api/auth', authRouter);
-  console.log('✓ auth cargado');
-} catch (err) {
-  console.error('✗ Error en auth:', err.message);
-}
+const loadRoute = (name, route) => {
+  try {
+    const handler = require(route)(pool);
+    app.use(`/api/${name}`, handler);
+    console.log(`✓ ${name}`);
+  } catch (err) {
+    console.warn(`⚠ ${name}: ${err.message}`);
+  }
+};
 
-try {
-  const contactosRouter = require('./routes/contactos')(pool);
-  app.use('/api/contactos', contactosRouter);
-  console.log('✓ contactos cargado');
-} catch (err) {
-  console.error('✗ Error en contactos:', err.message);
-}
+loadRoute('auth', './routes/auth');
+loadRoute('contactos', './routes/contactos');
+loadRoute('servicios', './routes/servicios');
+loadRoute('servicios-detalle', './routes/servicios-detalle');
+loadRoute('testimonios', './routes/testimonios');
+
+console.log('✓ Rutas cargadas\n');
 
 // Error handler
 app.use((err, req, res, next) => {

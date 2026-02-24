@@ -1,7 +1,9 @@
 // API URL - Detecta automáticamente local vs producción
 const API_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:3001' 
-  : 'https://YOUR-RAILWAY-URL.up.railway.app'; // Cambiar por tu URL de Railway después del deploy
+  : (window.location.hostname === 'vercel.app' 
+    ? 'http://localhost:3001'  // Cambiar esto cuando tengas backend online
+    : 'http://localhost:3001');
 
 // Toast notifications
 const showToast = (msg, type='info', duration=3000)=>{
