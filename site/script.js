@@ -1,7 +1,7 @@
 // API URL - Detecta automáticamente local vs producción
 const API_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:3001' 
-  : 'https://your-render-api.onrender.com'; // Cambiar por tu URL de Render
+  : 'https://YOUR-RAILWAY-URL.up.railway.app'; // Cambiar por tu URL de Railway después del deploy
 
 // Toast notifications
 const showToast = (msg, type='info', duration=3000)=>{

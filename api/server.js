@@ -3,9 +3,32 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
 const rateLimit = require('./middleware/rate-limit');
+const url = require('url');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Parse DATABASE_URL from Railway (if available)
+let dbConfig;
+if (process.env.DATABASE_URL) {
+  const dbUrl = new url.URL(process.env.DATABASE_URL);
+  dbConfig = {
+    host: dbUrl.hostname,
+    port: dbUrl.port || 3306,
+    user: dbUrl.username,
+    password: dbUrl.password,
+    database: dbUrl.pathname.slice(1)
+  };
+} else {
+  // Local development
+  dbConfig = {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 3306,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+  };
+}
 
 // CORS Configuration
 const corsOptions = {
@@ -21,13 +44,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Pool de conexiones MySQL
+// Pool de conexiones MySQL con soporte para Railway
 const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT || 3306,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  ...dbConfig,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
