@@ -1,0 +1,13 @@
+{
+  "buildCommand": "echo 'Static site - no build needed'",
+  "outputDirectory": "site",
+  "env": {
+    "VERCEL_ANALYTICS_ID": "@vercel/web-analytics"
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
+  ]
+}
