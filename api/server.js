@@ -60,26 +60,29 @@ app.get('/api/health', (req, res) => {
 // Rate limiting para formulario de contacto
 app.use('/api/contactos/form', rateLimit(pool));
 
-// Rutas existentes
-app.use('/api/auth', require('./routes/auth')(pool));
-app.use('/api/contactos', require('./routes/contactos')(pool));
-app.use('/api/servicios', require('./routes/servicios')(pool));
-app.use('/api/servicios-detalle', require('./routes/servicios-detalle')(pool));
-app.use('/api/testimonios', require('./routes/testimonios')(pool));
-app.use('/api/dashboard', require('./routes/dashboard')(pool));
-app.use('/api/tickets', require('./routes/tickets')(pool));
-app.use('/api/casos-exito', require('./routes/casos-exito')(pool));
-app.use('/api/planes', require('./routes/planes')(pool));
-app.use('/api/contenidos', require('./routes/contenidos')(pool));
-app.use('/api/reportes', require('./routes/reportes')(pool));
+// Test de ruta básica
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Backend funcionando correctamente' });
+});
 
-// Nuevas rutas para mejoras
-app.use('/api/blog', require('./routes/blog')(pool));
-app.use('/api/newsletter', require('./routes/newsletter')(pool));
-app.use('/api/faq', require('./routes/faq')(pool));
-app.use('/api/equipo', require('./routes/equipo')(pool));
-app.use('/api/recursos', require('./routes/recursos')(pool));
-app.use('/api/cotizaciones', require('./routes/cotizaciones')(pool));
+// Rutas - una por una para identificar problema
+console.log('Cargando rutas...');
+
+try {
+  const authRouter = require('./routes/auth')(pool);
+  app.use('/api/auth', authRouter);
+  console.log('✓ auth cargado');
+} catch (err) {
+  console.error('✗ Error en auth:', err.message);
+}
+
+try {
+  const contactosRouter = require('./routes/contactos')(pool);
+  app.use('/api/contactos', contactosRouter);
+  console.log('✓ contactos cargado');
+} catch (err) {
+  console.error('✗ Error en contactos:', err.message);
+}
 
 // Error handler
 app.use((err, req, res, next) => {
